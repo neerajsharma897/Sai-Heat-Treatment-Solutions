@@ -1,17 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
-/* Custom color palette for Sai Heat Treatment Solutions */
 :root {
-  --color-primary-blue: #0D2F4F;
-  --color-primary-orange: #FF8C00;
-  --color-neutral-gray: #F0F2F5;
-  --color-text-dark: #1A202C;
-  --font-family-sans: 'Roboto', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-family-heading: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-primary-blue: #091e32;
+  --color-primary-orange: #fdaf29;
+  --color-neutral-gray: #F8F9FA;
+  --color-dark: #212529;
+  --color-light-gray: #E9ECEF;
+  --color-medium-gray: #6C757D;
+  
+  --font-family-heading: 'Montserrat', sans-serif;
+  --font-family-body: 'Roboto', sans-serif;
 }
 
-/* Custom animations for the carousel */
+/* ✨ Custom animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -21,7 +23,55 @@
   animation: fadeIn 0.8s ease-in-out;
 }
 
-/* Smooth scroll behavior */
+/* 🌐 Global Styles */
 html {
   scroll-behavior: smooth;
 }
+
+/* Prevent accidental horizontal scroll/shift on mobile */
+html, body, #root {
+  overflow-x: hidden;
+}
+
+.fade-in { animation: fadeIn 0.8s ease forwards; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-600 { animation-delay: 0.6s; }
+
+/* 📌 Masonry helpers (Pinterest-style) */
+.masonry {
+  /* unified gap for both horizontal (columns) and vertical (item margin) */
+  column-gap: var(--masonry-gap, 12px);
+}
+.masonry-item {
+  /* Ensure items are treated as discrete boxes within column flow */
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
+  margin-bottom: var(--masonry-gap, 12px);
+  /* Prevent items from breaking and enable true masonry stacking */
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* 🔧 Reduce rounded corners globally (keep rounded-full as-is) */
+.rounded { border-radius: 3px !important; }
+.rounded-md { border-radius: 4px !important; }
+.rounded-lg { border-radius: 6px !important; }
+.rounded-xl { border-radius: 8px !important; }
+.rounded-2xl { border-radius: 10px !important; }
+.rounded-3xl { border-radius: 12px !important; }
+
+/* 🧵 Line clamp helpers for consistent card heights */
+.line-clamp-3,
+.line-clamp-4,
+.line-clamp-5 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 { line-clamp: 3; -webkit-line-clamp: 3; }
+.line-clamp-4 { line-clamp: 4; -webkit-line-clamp: 4; }
+.line-clamp-5 { line-clamp: 5; -webkit-line-clamp: 5; }

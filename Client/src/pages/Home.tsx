@@ -1,213 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { FaIndustry, FaGlobe, FaCertificate, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-
-// Animated Counter Component
-const AnimatedCounter: React.FC<{ end: number; suffix?: string; duration?: number }> = ({
-  end,
-  suffix = '',
-  duration = 2000
-}) => {
-  const [count, setCount] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let startTime: number;
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const progress = Math.min((currentTime - startTime) / duration, 1);
-
-      setCount(Math.floor(progress * end));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [isVisible, end, duration]);
-
-  return (
-    <div ref={ref} className="text-4xl font-bold text-primary-orange mb-2">
-      {count}{suffix}
-    </div>
-  );
-};
+import React from 'react';
+import { FaIndustry, FaGlobe, FaUsers, FaShieldAlt } from 'react-icons/fa';
+import Carousel from '../components/Carousel';
+import { homeCarouselSlides } from '../data/carouselData';
 
 const Home: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const carouselData = [
-    {
-      title: "Sai Heat Treatment Solution",
-      subtitle: "Leading PWHT & Heat Treatment Specialists",
-      description: "Safely and cost-effectively providing world-class heat treatment solutions across Asia, Middle East & Africa since 2022.",
-      image: '/tenweb_media_rf7rq7x5p.jpg'
-    },
-    {
-      title: "300+ Technical Staff",
-      subtitle: "Experienced Professionals at Your Service",
-      description: "Our team includes ASNT Level-III inspectors and heat treatment specialists with decades of combined experience.",
-      image: '/tenweb_media_RWW2L8TB4.jpg'
-    },
-    {
-      title: "24-Hour Response",
-      subtitle: "Prompt & Reliable Service",
-      description: "Dedicated staff and equipment ready to handle routine to the most challenging customer needs across multiple continents.",
-      image: '/tenweb_media_syr79yfpg.jpg'
-    },
-    {
-      title: "Zero Incidents Goal",
-      subtitle: "Safety-First Culture",
-      description: "Committed to safety excellence with structured risk management and strict adherence to international safety standards.",
-      image: '/tenweb_media_r8h0xvvhf.jpg'
-    }
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselData.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselData.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselData.length) % carouselData.length);
-
   return (
     <div>
       {/* Hero Carousel Section */}
-      <div className="relative h-[80vh] overflow-hidden">
-        {carouselData.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-transform duration-1000 ease-in-out ${
-              index === currentSlide ? 'translate-x-0' :
-              index < currentSlide ? '-translate-x-full' : 'translate-x-full'
-            }`}
-            style={{
-              backgroundImage: `url(${slide.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-primary-blue/80 to-primary-blue/40 flex items-center justify-center text-center">
-              <div className="max-w-4xl px-4">
-                <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 animate-fade-in font-heading">
-                  {slide.title}
-                </h1>
-                <h2 className="text-2xl md:text-3xl text-black font-semibold mb-6">
-                  {slide.subtitle}
-                </h2>
-                <p className="text-lg md:text-xl text-black mb-8 max-w-3xl mx-auto">
-                  {slide.description}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link to="/contact" className="bg-primary-orange text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-primary-orange/90 transition-all hover:shadow-lg hover:-translate-y-0.5">
-                    Get Quote
-                  </Link>
-                  <Link to="/services" className="border-2 border-white text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-white hover:text-primary-blue transition-all hover:shadow-lg hover:-translate-y-0.5">
-                    Our Services
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+      <Carousel slides={homeCarouselSlides} />
 
-        {/* Carousel Controls */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all"
-        >
-          <FaChevronLeft size={20} />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all"
-        >
-          <FaChevronRight size={20} />
-        </button>
-
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {carouselData.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                index === currentSlide ? 'bg-primary-orange' : 'bg-white bg-opacity-50'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Company Stats Section */}
-      <section className="py-16 bg-primary-blue text-white">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div className="p-6">
-              <AnimatedCounter end={300} suffix="+" />
-              <div className="text-lg">Technical Staff</div>
-            </div>
-            <div className="p-6">
-              <AnimatedCounter end={2022} />
-              <div className="text-lg">Founded</div>
-            </div>
-            <div className="p-6">
-              <AnimatedCounter end={24} suffix="/7" />
-              <div className="text-lg">Response Time</div>
-            </div>
-            <div className="p-6">
-              <AnimatedCounter end={3} />
-              <div className="text-lg">Continents Served</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission & Vision Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-primary-blue mb-4 font-heading">Our Mission & Vision</h2>
-            <p className="text-black max-w-3xl mx-auto">
-              Part of the SAI GROUP, established to fill the gap in regional PWHT expertise
+      {/* Mission & Vision (Asymmetric) */}
+      <section className="py-14 sm:py-20 bg-white">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="mb-12 sm:mb-16">
+            <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] mb-3 sm:mb-4 font-heading text-center">
+              Our Mission & Vision
+            </h2>
+            <p className="text-[var(--color-dark)] max-w-3xl mx-auto text-center">
+              Part of the SAI GROUP, established to fill the gap in regional PWHT expertise.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="bg-neutral-gray p-8 rounded-lg shadow-lg">
-              <h3 className="text-2xl font-bold text-primary-blue mb-4 font-heading">Mission</h3>
-              <p className="text-black mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+            {/* Mission - light card */}
+            <div className="lg:col-span-7 bg-[var(--color-neutral-gray)] p-6 sm:p-10 rounded-2xl shadow-xl">
+              <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary-blue)] mb-4 font-heading">Mission</h3>
+              <p className="text-[var(--color-dark)] mb-4">
                 To safely and cost-effectively provide world-class heat treatment solutions, serving routine to the most challenging customer needs.
               </p>
-              <p className="text-black">
+              <p className="text-[var(--color-dark)]">
                 Become the most trusted provider in Asia & Middle East with commitment to safety, quality, customer satisfaction, dependability, and flexibility.
               </p>
             </div>
-            <div className="bg-primary-blue text-white p-8 rounded-lg shadow-lg">
-              <h3 className="text-2xl font-bold text-primary-orange mb-4 font-heading">Vision 2030</h3>
+            {/* Vision - dark panel with accent */}
+            <div className="lg:col-span-5 relative overflow-hidden rounded-2xl shadow-xl bg-[var(--color-primary-blue)] text-white p-6 sm:p-10">
+              <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-[var(--color-primary-orange)]/20 blur-2xl" aria-hidden="true" />
+              <h3 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary-orange)] mb-4 font-heading">Vision 2030</h3>
               <p className="mb-4">
                 Establish SHS as a regional leader in heat treatment services and gain continental recognition in Asia and Africa.
               </p>
@@ -219,60 +46,150 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="py-20 bg-neutral-gray">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-primary-blue mb-12 font-heading">Why Choose Sai Heat Treatment Solution?</h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="p-8 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-              <FaGlobe className="text-5xl text-primary-orange mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-primary-blue mb-4 font-heading">Global Experience</h3>
-              <p className="text-black">Extensive experience serving clients across Asia, Middle East, and Africa with proven track record.</p>
+      {/* Stats strip */}
+      <section className="bg-[var(--color-neutral-gray)] py-8 sm:py-12">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            {[{n:'15+', l:'Years Experience'}, {n:'500+', l:'Happy Customers'}, {n:'24/7', l:'Service'},{n:'99%', l:'Success Rate'}].map((s) => (
+              <div key={s.l} className="">
+                <div className="text-2xl sm:text-3xl font-extrabold text-[var(--color-primary-blue)] font-heading">{s.n}</div>
+                <div className="text-[var(--color-dark)] text-sm sm:text-base">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Snapshot */}
+      <section id="about" className="py-14 sm:py-20 bg-white">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Image */}
+            <div className="lg:col-span-5 order-1 lg:order-none">
+              <div className="relative overflow-hidden rounded-2xl shadow-xl">
+                <img
+                  src="/tenweb_media_r8h0xvvhf.jpg"
+                  alt="Heat treatment operations"
+                  className="w-full h-64 sm:h-80 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-primary-blue)]/10 to-transparent" />
+              </div>
             </div>
-            <div className="p-8 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-              <FaCertificate className="text-5xl text-primary-orange mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-primary-blue mb-4 font-heading">ASNT Level-III Experts</h3>
-              <p className="text-black">Team includes experienced EN/ASNT Level-III inspectors ensuring highest quality standards.</p>
-            </div>
-            <div className="p-8 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-              <FaIndustry className="text-5xl text-primary-orange mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-primary-blue mb-4 font-heading">Advanced Equipment</h3>
-              <p className="text-black">14 PWHT machines (50 KVA), 25+ temperature recorders, mobile furnaces up to 1200°C.</p>
-            </div>
-            <div className="p-8 bg-white rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-              <div className="text-5xl text-primary-orange mx-auto mb-4 flex justify-center">🛡️</div>
-              <h3 className="text-xl font-semibold text-primary-blue mb-4 font-heading">Safety First</h3>
-              <p className="text-black">Zero incidents goal with structured risk management and safety-first culture.</p>
+            {/* Copy */}
+            <div className="lg:col-span-7">
+              <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] font-heading mb-3">About Sai Heat Treatment Solutions</h2>
+              <p className="text-[var(--color-dark)] mb-5">
+                Founded as part of SAI GROUP, we deliver world‑class heat treatment across oil & gas, power, chemical, and heavy industries throughout India, Asia, and the Middle East.
+              </p>
+              <ul className="grid sm:grid-cols-2 gap-3">
+                {[
+                  'Electrical and burner systems expertise',
+                  '300+ skilled technical staff',
+                  'Mobile furnaces up to 1200°C',
+                  'Quality backed by EN/ASNT Level‑III',
+                ].map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-1 inline-block w-2.5 h-2.5 rounded-full bg-[var(--color-primary-orange)]" />
+                    <span className="text-[var(--color-dark)]">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Preview Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-primary-blue mb-4 font-heading">Our Specialized Services</h2>
-            <p className="text-black">Comprehensive heat treatment solutions for diverse industrial applications</p>
+      {/* Global Presence band */}
+      <section className="bg-[var(--color-primary-blue)] text-white py-10 sm:py-14">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            {[
+              { title: 'India', desc: 'HQ in Maharashtra with nationwide coverage' },
+              { title: 'Asia & Middle East', desc: 'UAE, Oman, Dubai, Sharjah, and expanding' },
+              { title: 'Africa', desc: 'Nigeria, Kenya, growing footprint' },
+            ].map(x => (
+              <div key={x.title} className="bg-white/5 rounded-xl p-5 border border-white/10">
+                <div className="text-[var(--color-primary-orange)] font-extrabold text-2xl mb-1">{x.title}</div>
+                <div className="text-white/90 text-sm sm:text-base">{x.desc}</div>
+              </div>
+            ))}
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6 border-2 border-neutral-gray rounded-lg hover:border-primary-orange hover:shadow-lg transition-all duration-300">
-              <h4 className="text-xl font-semibold text-primary-blue mb-2 font-heading">PWHT / Stress Relief</h4>
-              <p className="text-black">Post-weld heat treatment for improved corrosion resistance</p>
-            </div>
-            <div className="text-center p-6 border-2 border-neutral-gray rounded-lg hover:border-primary-orange hover:shadow-lg transition-all duration-300">
-              <h4 className="text-xl font-semibold text-primary-blue mb-2 font-heading">Preheating & Annealing</h4>
-              <p className="text-black">Controlled heating processes for optimal material properties</p>
-            </div>
-            <div className="text-center p-6 border-2 border-neutral-gray rounded-lg hover:border-primary-orange hover:shadow-lg transition-all duration-300">
-              <h4 className="text-xl font-semibold text-primary-blue mb-2 font-heading">Dry Out Systems</h4>
-              <p className="text-black">High-velocity burners and electrical heating solutions</p>
-            </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us (Staggered list) */}
+      <section className="py-14 sm:py-20 bg-white">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] font-heading">
+              Why Choose Us
+            </h2>
           </div>
-          <div className="text-center mt-8">
-            <Link to="/services" className="bg-primary-orange text-white font-bold py-3 px-8 rounded-lg hover:bg-primary-orange/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-              View All Services
-            </Link>
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {icon: <FaGlobe className="text-2xl" />, title:'Global Experience', desc:'Serving Asia, Middle East, and Africa with a proven track record.'},
+              {icon: <FaUsers className="text-2xl" />, title:'ASNT Level-III Experts', desc:'EN/ASNT Level-III inspectors ensure the highest quality standards.'},
+              {icon: <FaIndustry className="text-2xl" />, title:'Advanced Equipment', desc:'14 PWHT machines (50 KVA), 25+ recorders, mobile furnaces up to 1200°C.'},
+              {icon: <FaShieldAlt className="text-2xl" />, title:'Safety First', desc:'Zero incidents goal with structured risk management and safety-first culture.'},
+            ].map((f, i) => (
+              <div key={f.title} className={`flex items-start gap-4 p-6 rounded-xl shadow-sm border border-[var(--color-light-gray)] hover:shadow-md transition ${i % 2 ? 'md:translate-y-3' : ''}`}>
+                <div className="shrink-0 w-12 h-12 rounded-full bg-[var(--color-primary-orange)]/15 text-[var(--color-primary-orange)] grid place-items-center">{f.icon}</div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] mb-1 font-heading">{f.title}</h3>
+                  <p className="text-[var(--color-dark)] text-sm sm:text-base">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Key Team (concise) */}
+      <section className="py-10 sm:py-12 bg-[var(--color-neutral-gray)]">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-[1.9rem] sm:text-4xl  lg:text-5xl mb-4 font-bold text-[var(--color-primary-blue)] font-heading">Key Team</h2>
+            <p className="text-[var(--color-dark)]">Leadership with deep NDT and heat treatment expertise.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Anil Khond */}
+            <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
+              <div className="h-40 bg-[var(--color-neutral-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
+              <div className="p-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] font-heading">Mr. Anil Khond</h3>
+                <p className="text-[var(--color-dark)] text-sm mt-1">NDT: PAUT, TOFD, UT, MT, RT, PT</p>
+                <ul className="text-[var(--color-dark)] text-sm mt-3 space-y-1">
+                  <li>• ASNT Level III | ISO 9712 Level III</li>
+                  <li>• 13+ years in NDT</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Naresh Kolekar */}
+            <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
+              <div className="h-40 bg-[var(--color-neutral-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
+              <div className="p-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] font-heading">Mr. Naresh Kolekar</h3>
+                <p className="text-[var(--color-dark)] text-sm mt-1">Heat Treatment Specialist</p>
+                <ul className="text-[var(--color-dark)] text-sm mt-3 space-y-1">
+                  <li>• Electrical, Oil & Gas firing methods</li>
+                  <li>• 32+ years experience</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Dharmendra Sharma */}
+            <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
+              <div className="h-40 bg-[var(--color-neutral-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
+              <div className="p-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] font-heading">Mr. Dharmendra Sharma</h3>
+                <p className="text-[var(--color-dark)] text-sm mt-1">Heat Treatment Specialist</p>
+                <ul className="text-[var(--color-dark)] text-sm mt-3 space-y-1">
+                  <li>• Electrical, Oil & Gas firing methods</li>
+                  <li>• 26+ years experience</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>

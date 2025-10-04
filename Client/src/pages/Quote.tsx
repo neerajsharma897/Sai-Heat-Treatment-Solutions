@@ -1,120 +1,273 @@
-import React, { useState } from 'react';
+import { useRef, useState } from 'react';
+
+const MAX_TOTAL = 18 * 1024 * 1024; // 18 MB safe total
+const ACCEPT = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
+
+// Absolute API URL in dev; same-origin in prod
+const API_BASE = '';
 
 const Quote: React.FC = () => {
-    const [fileName, setFileName] = useState<string>("");
-    const [file, setFile] = useState<File | null>(null); // State to hold the file
+  const [files, setFiles] = useState<File[]>([]);
+  const [filesError, setFilesError] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const submitLockRef = useRef(false); // re-entrancy guard
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
-            setFile(event.target.files[0]);
-            setFileName(event.target.files[0].name);
-        } else {
-            setFile(null);
-            setFileName("");
-        }
-    };
+  const totalUsed = files.reduce((sum, f) => sum + f.size, 0);
+  const usedPct = Math.min(100, Math.round((totalUsed / MAX_TOTAL) * 100));
+  const formatSize = (bytes: number) => (bytes / (1024 * 1024)).toFixed(1);
+  const overLimit = totalUsed > MAX_TOTAL;
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const chosen = Array.from(event.target.files || []);
+    if (!chosen.length) {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
 
-        const formData = new FormData(event.currentTarget);
-        if (file) {
-            formData.append('file', file);
-        }
+    const tooBig = chosen.find(f => f.size > MAX_TOTAL);
+    if (tooBig) {
+      setFilesError(`${tooBig.name} is ${formatSize(tooBig.size)} MB. Max size is 18 MB per file.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
 
-        try {
-            // This is the endpoint on your Python backend that you'll create
-            const response = await fetch('/api/quote', {
-                method: 'POST',
-                body: formData,
-            });
+    const merged = [...files, ...chosen];
+    const total = merged.reduce((sum, f) => sum + f.size, 0);
+    if (total > MAX_TOTAL) {
+      setFilesError(`Total size ${formatSize(total)} MB exceeds 18 MB limit. Remove some files.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
 
-            if (response.ok) {
-                alert('Thank you for your inquiry. We will get back to you shortly!');
-                // Reset form if needed
-                // event.currentTarget.reset();
-                // setFileName("");
-                // setFile(null);
-            } else {
-                alert('There was an error submitting your request. Please try again.');
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            alert('There was an error submitting your request. Please try again.');
-        }
-    };
+    const seen = new Set<string>();
+    const deduped = merged.filter(f => {
+      const key = `${f.name}-${f.size}-${f.lastModified}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 
+    setFiles(deduped);
+    setFilesError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
-    return (
-        <div className="py-20 bg-brand-light">
-            <div className="container mx-auto px-6">
-                <div className="max-w-3xl mx-auto bg-white p-10 rounded-lg shadow-lg">
-                    <div className="text-center mb-8">
-                        <h1 className="text-4xl font-bold text-primary-blue">Request a Quote</h1>
-                        <p className="text-gray-600 mt-2">
-                            Fill out the form below to submit your requirements, and our expert team will contact you promptly.
-                        </p>
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Synchronous guard (in case rapid double clicks happen before state updates)
+    if (submitLockRef.current) return;
+    if (isSubmitting || overLimit) return;
+    submitLockRef.current = true;
+    setIsSubmitting(true);
+
+    // Capture form element early to avoid null reference after async operations
+    const formEl = event.currentTarget;
+    const formData = new FormData(formEl);
+    formData.delete('attachments');
+    files.forEach(f => formData.append('attachments', f));
+
+    try {
+      // Add a timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s
+      const response = await fetch(`${API_BASE}/api/quote`, { method: 'POST', body: formData, signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (response.ok) {
+        alert('Thank you for your inquiry. We will get back to you shortly!');
+        formEl.reset();
+        setFiles([]);
+        setFilesError('');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
+        alert(errorData.error || 'There was an error submitting your request. Please try again.');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      const aborted = (error as any)?.name === 'AbortError';
+      alert(aborted ? 'Request timed out. Please try again.' : 'Network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+      submitLockRef.current = false;
+    }
+  };
+
+  const handleClearFiles = () => {
+    setFiles([]);
+    setFilesError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveFile = (targetFile: File) => {
+    const next = files.filter(f => f !== targetFile);
+    setFiles(next);
+    setFilesError('');
+  };
+
+  return (
+    <div>
+      {/* Hero image band */}
+      <section className="relative h-[20dvh] sm:h-[20dvh] lg:h-[34dvh] overflow-hidden">
+        <img
+          src="/tenweb_media_r03qb6za6.jpg"
+          alt="Request a quote for heat treatment"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[var(--color-primary-blue)]/70 via-[var(--color-primary-blue)]/60 to-transparent backdrop-blur-[2px] sm:backdrop-blur" />
+        <div className="relative h-full w-full max-w-7xl mx-auto px-3 sm:px-6 flex items-center  pb-6 sm:pb-10">
+          <div>
+            <h1 className="text-3xl sm:text-5xl font-bold text-white font-heading leading-tight">Request a Quote</h1>
+            <p className="text-white/90 max-w-2xl mt-2 text-sm sm:text-base">Share your specs, drawings, and quantities—we’ll respond quickly with a precise, code-compliant proposal.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Main content */}
+      <section className="relative py-14 sm:py-20 bg-[var(--color-neutral-gray)]">
+        <div aria-hidden className="pointer-events-none absolute -top-10 -left-10 w-72 h-72 rounded-full bg-[var(--color-primary-blue)]/13 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-16 -right-10 w-80 h-80 rounded-full bg-[var(--color-primary-orange)]/13 blur-3xl" />
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-3 sm:px-6">
+          <div className="w-full max-w-3xl mx-auto">
+            <div id="quote-form" className="bg-white rounded-xl shadow-md p-6 sm:p-8 border border-[var(--color-light-gray)] border-t-4 border-t-[var(--color-primary-orange)] scroll-mt-[var(--nav-h)] h-full flex flex-col">
+              <h2 className="text-2xl font-bold text-[var(--color-primary-blue)] mb-4 font-heading">Tell us about your job</h2>
+
+              <form onSubmit={handleSubmit} className="space-y-6 flex-1 flex flex-col">
+                {/* Honeypot */}
+                <input type="text" name="website" autoComplete="off" tabIndex={-1} className="hidden" />
+
+                {/* Name & Email */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <label htmlFor="name" className="sr-only">Name</label>
+                  <input id="name" type="text" name="name" autoComplete="name" placeholder="Your Name *" required className="w-full px-4 py-3 border border-[var(--color-light-gray)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)]" />
+                  <label htmlFor="email" className="sr-only">Email</label>
+                  <input id="email" type="email" name="email" autoComplete="email" placeholder="Your Email *" required className="w-full px-4 py-3 border border-[var(--color-light-gray)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)]" />
+                </div>
+
+                {/* Company & Phone */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <label htmlFor="company" className="sr-only">Company</label>
+                  <input id="company" type="text" name="company" autoComplete="organization" placeholder="Company Name *" required className="w-full px-4 py-3 border border-[var(--color-light-gray)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)]" />
+                  <label htmlFor="phone" className="sr-only">Phone</label>
+                  <input id="phone" type="tel" name="phone" autoComplete="tel" placeholder="Phone Number *" required className="w-full px-4 py-3 border border-[var(--color-light-gray)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)]" />
+                </div>
+
+                {/* Service */}
+                <div>
+                  <label htmlFor="service" className="sr-only">Service</label>
+                  <select id="service" name="service" className="w-full px-4 py-3 border border-[var(--color-light-gray)] rounded-lg bg-white text-[var(--color-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)]" defaultValue="" required>
+                    <option value="" disabled>Select a service of interest *</option>
+                    {[
+                      'PWHT / Stress Relief',
+                      'Preheating',
+                      'Dry Out System',
+                      'Annealing & Normalizing',
+                      'Hydrogen Diffusion',
+                      'Temporary Electric Furnace',
+                      'Other',
+                    ].map(opt => (<option key={opt} value={opt}>{opt}</option>))}
+                  </select>
+                </div>
+
+                {/* Requirements */}
+                <div>
+                  <label htmlFor="requirements" className="sr-only">Requirements</label>
+                  <textarea id="requirements" name="requirements" placeholder="Please describe your project requirements in detail... *" rows={6} required className="w-full px-4 py-3 border border-[var(--color-light-gray)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)]" />
+                </div>
+
+                {/* File Upload (multi) */}
+                <div>
+                  <label htmlFor="fileUpload" className="block text-[var(--color-dark)] font-medium mb-2">Attach Files (optional)</label>
+
+                  <div className="flex items-center gap-3 border border-[var(--color-light-gray)] rounded-lg px-3 py-2.5 bg-[var(--color-neutral-gray)] hover:bg-[var(--color-neutral-gray)]/70 transition">
+                    <input
+                      type="file"
+                      id="fileUpload"
+                      name="attachments"
+                      multiple
+                      onChange={handleFileChange}
+                      className="sr-only"
+                      accept={ACCEPT}
+                      ref={fileInputRef}
+                    />
+                    <label htmlFor="fileUpload" className="bg-[var(--color-primary-orange)] text-white px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-[var(--color-primary-orange)]/90 transition">
+                      Choose Files
+                    </label>
+                    <span className="text-[var(--color-dark)] text-sm truncate flex-1">
+                      {files.length === 0 ? 'No files chosen' :
+                        files.length === 1 ? files[0].name :
+                        `${files.length} files selected (${formatSize(totalUsed)} MB)`}
+                    </span>
+                    {files.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleClearFiles}
+                        className="text-[var(--color-primary-blue)] text-sm font-semibold px-3 py-1.5 rounded-full border border-[var(--color-primary-blue)] hover:bg-[var(--color-neutral-gray)] transition"
+                        aria-label="Clear selected files"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Indicator moved BELOW the Choose Files row */}
+                  <div className="mt-2">
+                    {/* Total size progress */}
+                    <div className="w-full h-1.5 bg-[var(--color-neutral-gray)] rounded overflow-hidden" aria-label="Total upload size used">
+                      <div
+                        className="h-full bg-[var(--color-primary-blue)] transition-all"
+                        style={{ width: `${usedPct}%` }}
+                      />
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Name & Email */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <input type="text" name="name" placeholder="Your Name *" required
-                                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange" />
-                            <input type="email" name="email" placeholder="Your Email *" required
-                                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange" />
-                        </div>
-
-                        {/* Company & Phone */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <input type="text" name="company" placeholder="Company Name"
-                                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange" />
-                            <input type="tel" name="phone" placeholder="Phone Number *" required
-                                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange" />
-                        </div>
-
-                        {/* Project Requirements */}
-                        <div>
-                            <textarea name="requirements" placeholder="Please describe your project requirements in detail... *" rows={6} required
-                                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange"></textarea>
-                        </div>
-
-                        {/* File Upload */}
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-2">Attach File (optional)</label>
-                            <div className="flex items-center gap-4 border rounded-lg px-4 py-3 bg-gray-50 hover:bg-gray-100 transition">
-                                {/* Hidden input but accessible */}
-                                <input
-                                    type="file"
-                                    id="fileUpload"
-                                    name="file"
-                                    onChange={handleFileChange}
-                                    className="sr-only"
-                                />
-                                <label
-                                    htmlFor="fileUpload"
-                                    className="bg-primary-orange text-white px-4 py-2 rounded-lg font-semibold cursor-pointer hover:bg-orange-600 transition"
-                                >
-                                    Choose File
-                                </label>
-                                <span className="text-gray-700 text-sm truncate flex-1">
-                                    {fileName || "No file chosen"}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Submit */}
-                        <button
-                            type="submit"
-                            className="w-full bg-primary-orange text-white font-bold py-3 px-6 rounded-lg hover:bg-orange-600 transition-colors text-lg"
-                        >
-                            Submit Request
-                        </button>
-                    </form>
+                    {/* Pills and helper text */}
+                    {files.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2 mt-2 sm:flex sm:flex-wrap">
+                        {files.map((f) => (
+                          <span
+                            key={`${f.name}-${f.size}-${f.lastModified}`}
+                            className="inline-flex items-center gap-2 text-xs bg-white border border-[var(--color-light-gray)] rounded-full px-3 py-1 shadow-sm w-full sm:w-auto"
+                          >
+                            <span className="truncate max-w-[120px] sm:max-w-[180px]" title={f.name}>
+                              {f.name} · {formatSize(f.size)} MB
+                            </span>
+                            <button
+                              type="button"
+                              aria-label={`Remove ${f.name}`}
+                              className="ml-1 grid place-items-center w-5 h-5 rounded-full bg-[var(--color-primary-blue)] text-white hover:opacity-90 transition-opacity"
+                              onClick={() => handleRemoveFile(f)}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-xs text-[var(--color-dark)]/70 mt-2">
+                      PDF, DOC, DOCX, JPG, PNG. Max 18 MB total.{files.length > 0 && ` Current: ${formatSize(totalUsed)} MB`}
+                    </p>
+                    {filesError && <p className="text-xs text-red-600 mt-1">{filesError}</p>}
+                  </div>
                 </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting || overLimit}
+                  aria-disabled={isSubmitting || overLimit}
+                  aria-busy={isSubmitting}
+                  className="w-full bg-[var(--color-primary-orange)] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[var(--color-primary-orange)]/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none transition-all text-lg"
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                </button>
+                <p className="text-xs text-[var(--color-dark)]/70">By submitting, you agree we may contact you about this request. We’ll never share your information.</p>
+              </form>
             </div>
+          </div>
         </div>
-    );
+      </section>
+    </div>
+  );
 };
 
 export default Quote;

@@ -36,7 +36,7 @@ const Contact: React.FC = () => {
                             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
                                 {/* Contact info + CTAs */}
                                 <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border border-[var(--color-light-gray)] md:h-full">
-                            <h2 className="text-2xl font-bold text-[var(--color-primary-blue)] mb-4 font-heading">Talk to us</h2>
+                            <h2 className="text-2xl font-bold text-[var(--color-primary-blue)] mb-4 font-heading">Contact Us</h2>
                             <p className="text-[var(--color-dark)] mb-6">Fastest responses via phone or email. Share drawings/specs for accurate quotes.</p>
 
                             <div className="space-y-4">

@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 sticky-bottom">
+    <footer className="bg-gray-900 sticky-bottom" role="contentinfo" aria-label="Site footer">
       {/* Main Footer Content */}
       <div className="mx-auto max-w-6xl px-4 md:px-6 py-12 text-white flex flex-col gap-10 md:flex-row md:gap-12">
         {/* Logo + About */}

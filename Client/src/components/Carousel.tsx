@@ -128,12 +128,14 @@ const Carousel: React.FC<CarouselProps> = ({
       {/* Navigation */}
       <button
         onClick={prevSlide}
+        aria-label="Previous slide"
         className="hidden sm:inline-flex absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 sm:p-3 rounded-full transition-all hover:scale-110 z-30"
       >
         <FaChevronLeft size={16} />
       </button>
       <button
         onClick={nextSlide}
+        aria-label="Next slide"
         className="hidden sm:inline-flex absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 sm:p-3 rounded-full transition-all hover:scale-110 z-30"
       >
         <FaChevronRight size={16} />
@@ -145,6 +147,7 @@ const Carousel: React.FC<CarouselProps> = ({
           <button
             key={index}
             onClick={() => goToSlide(index)}
+             aria-label={`Go to slide ${index + 1}`} 
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
               index === currentSlide ? 'bg-[var(--color-primary-orange)] scale-125' : 'bg-white/50 hover:bg-white/75'
             }`}

@@ -31,6 +31,7 @@ const Navbar: React.FC = () => {
     <>
     <nav
       ref={navRef}
+      aria-label="Primary"
       className="fixed top-0 left-0 right-0 z-50 bg-[var(--color-neutral-gray)] shadow-lg border-b border-[var(--color-light-gray)]"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
@@ -88,7 +89,7 @@ const Navbar: React.FC = () => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="lg:hidden bg-[var(--color-neutral-gray)] shadow-lg transition-all duration-300 fixed left-0 right-0 z-40 top-[var(--nav-h)]">
-          <div className="flex flex-col items-center justify-center px-6 py-6 space-y-4">
+          <div className="flex flex-col items-center justify-center px-6 py-6 space-y-3">
             {['/', '/services', '/projects', '/gallery', '/contact'].map((path, idx) => {
               const label = ['Home', 'Services', 'Projects', 'Gallery', 'Contact'][idx];
               return (

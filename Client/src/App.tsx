@@ -14,9 +14,15 @@ import NotFound from './pages/NotFound';
 const App: React.FC = () => {
   return (
     <Router>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded focus:shadow"
+      >
+        Skip to main content
+      </a>
       <div className="bg-white text-gray-900 font-sans">
         <Navbar />
-        <main>
+        <main id="main-content" role="main">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />

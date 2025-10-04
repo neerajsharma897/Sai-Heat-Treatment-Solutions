@@ -122,7 +122,7 @@ const Gallery: React.FC = () => {
             <div className="mt-6 flex justify-center">
               <button
                 onClick={loadMore}
-                className="px-4 py-2 rounded-md bg-[var(--color-primary-blue)] text-white shadow hover:shadow-md hover:bg-[var(--color-primary-blue)]/90 active:scale-[0.99] transition"
+                className="px-4 py-2 rounded-md bg-[var(--color-primary-orange)] text-white shadow hover:shadow-md hover:bg-[var(--color-primary-blue)]/90 active:scale-[0.99] transition"
               >
                 Load 10 more
               </button>

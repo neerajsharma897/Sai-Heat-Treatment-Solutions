@@ -26,6 +26,10 @@
 /* 🌐 Global Styles */
 html {
   scroll-behavior: smooth;
+  /* Improve mobile text autosizing compatibility */
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
 }
 
 /* Prevent accidental horizontal scroll/shift on mobile */
@@ -72,6 +76,6 @@ html, body, #root {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.line-clamp-3 { line-clamp: 3; -webkit-line-clamp: 3; }
-.line-clamp-4 { line-clamp: 4; -webkit-line-clamp: 4; }
-.line-clamp-5 { line-clamp: 5; -webkit-line-clamp: 5; }
+.line-clamp-3 { -webkit-line-clamp: 3; line-clamp: 3; }
+.line-clamp-4 { -webkit-line-clamp: 4; line-clamp: 4; }
+.line-clamp-5 { -webkit-line-clamp: 5; line-clamp: 5; }

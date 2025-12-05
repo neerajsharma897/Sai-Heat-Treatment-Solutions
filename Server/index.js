@@ -16,53 +16,27 @@ const MAX_TOTAL = 18 * 1024 * 1024; // 18 MB combined (safe for email)
 const MAX_FILES = 10;
 const BANNER_PATH = path.join(__dirname, 'Banner.png');
 
-// Core middleware
 app.set('trust proxy', 1);
-// CORS: allow specific origins in production when CORS_ORIGIN is set (comma-separated or single)
+
+// CORS: allow specific origins when CORS_ORIGIN is set (comma-separated)
 const corsOrigins = process.env.CORS_ORIGIN?.split(',').map(s => s.trim()).filter(Boolean);
 const corsOptions = corsOrigins && corsOrigins.length > 0
   ? {
       origin: (origin, callback) => {
-        // allow non-browser tools (no origin) and same-origin
-        if (!origin) return callback(null, true);
-        if (corsOrigins.some(o => o === origin)) return callback(null, true);
+        if (!origin) return callback(null, true); // non-browser tools
+        if (corsOrigins.includes(origin)) return callback(null, true);
         return callback(new Error('Not allowed by CORS'));
       },
       credentials: true,
     }
-  : { origin: true, credentials: true }; // permissive (useful in dev or same-origin)
+  : { origin: true, credentials: true };
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Conditionally build the CSP string
 const isDev = process.env.NODE_ENV !== 'production';
 
-// Conditionally build the CSP string
-const cspDirectives = [
-  "default-src 'self'",
-  // Allow 'unsafe-eval' only in development for Vite's HMR/React Refresh
-  `script-src 'self' ${isDev ? "'unsafe-eval'" : ""}`,
-  'report-uri /csp-report',
-];
-const cspReportOnly = cspDirectives.join('; ');
-
-const enableCspReportOnly = (process.env.CSP_REPORT_ONLY === '1') || isDev;
-if (enableCspReportOnly) {
-  app.use((req, res, next) => {
-    // Only set for HTML responses and static assets; harmless for API
-    res.setHeader('Content-Security-Policy-Report-Only', cspReportOnly);
-    next();
-  });
-}
-
-// Endpoint to receive CSP reports
-app.post('/csp-report', express.json({ type: ['application/csp-report', 'application/json'] }), (req, res) => {
-  // Console log minimal payload for inspection
-  const report = req.body['csp-report'] || req.body;
-  console.log('CSP Report:', JSON.stringify(report, null, 2));
-  res.status(204).end();
-});
+// Note: Content-Security-Policy reporting removed. Re-enable only if you need CSP report collection.
 
 // Global rate limit
 app.use(rateLimit({
@@ -91,7 +65,8 @@ function createTransporter() {
   });
 }
 
-// Per-route rate limit + cooldown (in-memory)
+
+// Per-route rate limiter for the quote endpoint
 const quoteLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
@@ -100,10 +75,10 @@ const quoteLimiter = rateLimit({
   message: { error: 'Too many requests. Please wait a minute and try again.' },
 });
 
-// Multer upload: field "attachments", ≤ 25 MB per file, ≤ 10 files
+// Multer: memory storage for attachments (per-file cap 18 MB, max files defined by MAX_FILES)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 18 * 1024 * 1024 }, // per-file hard cap
+  limits: { fileSize: 18 * 1024 * 1024 },
 }).array('attachments', MAX_FILES);
 
 
@@ -215,20 +190,11 @@ Sai Heat Treatment Solutions`,
   }
 );
 
-// Security and header hygiene middleware
+// Security headers
 app.use((req, res, next) => {
-  // Remove deprecated/legacy headers if any middlewares set them
   res.removeHeader('X-Powered-By');
-  res.removeHeader('X-XSS-Protection');
-  res.removeHeader('X-Frame-Options');
-  // Ensure correct content-type charset when we set HTML later
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  // Set a minimal CSP primarily for frame-ancestors (replaces X-Frame-Options)
-  // Keep it relaxed otherwise to avoid breaking existing resources
-  const existingCsp = res.getHeader('Content-Security-Policy');
-  if (!existingCsp) {
-    res.setHeader('Content-Security-Policy', "frame-ancestors 'self'");
-  }
+  // No CSP header set by default here; set a CSP in your reverse-proxy or CDN if required.
   next();
 });
 

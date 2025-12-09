@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaTools, FaIndustry, FaCogs } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 // Define the type for a single service object
 interface Service {
@@ -195,7 +196,7 @@ const Services: React.FC = () => {
             </div>
 
             <div className="mt-8 text-center">
-              <a href="/quote" className="bg-[var(--color-primary-orange)] text-[var(--color-dark)] font-semibold py-3 px-4 rounded-full hover:bg-[var(--color-primary-orange)]/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">Request a PWHT Quote</a>
+              <Link to="/quote" className="bg-[var(--color-primary-orange)] text-[var(--color-dark)] font-semibold py-3 px-4 rounded-full hover:bg-[var(--color-primary-orange)]/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">Request a PWHT Quote</Link>
             </div>
           </div>
         </div>

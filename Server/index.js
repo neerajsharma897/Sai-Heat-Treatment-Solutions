@@ -228,14 +228,18 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Start server with relaxed timeouts (helpful for multipart on slow disks)
-const server = app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
-server.headersTimeout = 120000;
-server.requestTimeout = 120000;
+if (process.env.NODE_ENV !== 'production') {
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+  server.headersTimeout = 120000;
+  server.requestTimeout = 120000;
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => { console.log('SIGTERM'); process.exit(0); });
 process.on('SIGINT', () => { console.log('SIGINT'); process.exit(0); });
+
+// IMPORTANT: Export the app for Vercel
+module.exports = app;

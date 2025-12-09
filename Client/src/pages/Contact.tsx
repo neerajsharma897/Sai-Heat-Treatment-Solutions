@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const EMAIL = 'saiheattreatmentsolution@gmail.com';
 // Assumed India country code based on location; change if needed
@@ -56,7 +57,7 @@ const Contact: React.FC = () => {
                             <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-3 items-stretch sm:items-center sm:justify-start">
                                 <a  href={`tel:${PHONE_TEL}`} className="w-full sm:w-auto text-center bg-[var(--color-primary-orange)] text-white font-semibold px-5 py-2.5 rounded-full hover:bg-[var(--color-primary-orange)]/90 transition"> Call Now </a>
                                 <a  href={`mailto:${EMAIL}`} className="w-full sm:w-auto text-center bg-white border border-[var(--color-primary-blue)] text-[var(--color-primary-blue)] font-semibold px-5 py-2.5 rounded-full hover:bg-[var(--color-neutral-gray)] transition"> Email Us </a>
-                                <a  href="/quote" className="w-full sm:w-auto text-center bg-white border border-[var(--color-primary-blue)] text-[var(--color-primary-blue)] font-semibold px-5 py-2.5 rounded-full hover:bg-[var(--color-neutral-gray)] transition"> Get a Quote </a>
+                                <Link  to="/quote" className="w-full sm:w-auto text-center bg-white border border-[var(--color-primary-blue)] text-[var(--color-primary-blue)] font-semibold px-5 py-2.5 rounded-full hover:bg-[var(--color-neutral-gray)] transition"> Get a Quote </Link>
                             </div>
                         </div>
 

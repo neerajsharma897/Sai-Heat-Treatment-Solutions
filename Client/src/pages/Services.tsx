@@ -14,32 +14,32 @@ const Services: React.FC = () => {
     {
       title: "PWHT/Stress Relief",
       description: "Post Weld Heat Treatment crucial for improving corrosion resistance and eliminating residual stresses from welding. We use advanced heating elements and combustion oil/gas burners with precise temperature control.",
-      img: "/Website gallery/28042013024.jpg"
+      img: "/Website gallery/IMG_018.jpg"
     },
     {
       title: "Preheating",
       description: "Controlled preheating slows the cooling process after welding, reducing defects like cold cracks and lowering residual stress. Process maintained until welding completion with continuous monitoring.",
-      img: "/Website gallery/16072007068.jpg"
+      img: "/Website gallery/IMG_001.jpg"
     },
     {
       title: "Dry Out System",
       description: "Specialized service for newly installed refractory in high-temperature processes. We deploy high-velocity burners or electrical heating elements to prevent stress cracking and ensure refractory longevity.",
-      img: "/Website gallery/IMG_20160403_020811.jpg"
+      img: "/Website gallery/IMG_012.jpg"
     },
     {
       title: "Annealing & Normalizing",
       description: "Heat treatment processes to alter material microstructure, improving mechanical properties like toughness and ductility while relieving internal stresses for optimal performance.",
-      img: "/Website gallery/2014710210020.jpg"
+      img: "/Website gallery/IMG_011.jpg"
     },
     {
       title: "Hydrogen Diffusion",
       description: "Specialized process to remove hydrogen absorbed during welding that can cause cracking. Involves precise heating to specific temperatures allowing safe hydrogen diffusion.",
-      img: "/Website gallery/IMG_0071.JPG"
+      img: "/Website gallery/IMG_024.JPG"
     },
     {
       title: "Temporary Electric Furnace",
       description: "Essential for efficiently handling PWHT for multiple objects, especially when adhering to ASME standards. Our mobile furnaces accelerate project schedules with temperatures up to 1200°C.",
-      img: "/Website gallery/IMG_0066.JPG" 
+      img: "/Website gallery/IMG_023.JPG" 
     }
   ];
 

@@ -7,8 +7,8 @@
   --color-neutral-gray: #F8F9FA;
   --color-dark: #212529;
   --color-light-gray: #E9ECEF;
-  --color-medium-gray: #6C757D;
-  
+  --color-dark-gray: #6C757D;
+  --color-medium-gray: #eeeeee;
   --font-family-heading: 'Montserrat', sans-serif;
   --font-family-body: 'Roboto', sans-serif;
 }

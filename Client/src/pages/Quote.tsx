@@ -184,7 +184,7 @@ const Quote: React.FC = () => {
         <div className="relative h-full w-full max-w-7xl mx-auto px-3 sm:px-6 flex items-center  pb-6 sm:pb-10">
           <div>
             <h1 className="text-3xl sm:text-5xl font-bold text-white font-heading leading-tight">Request a Quote</h1>
-            <p className="text-white/90 max-w-2xl mt-2 text-sm sm:text-base">Share your specs, drawings, and quantities—we’ll respond quickly with a precise, code-compliant proposal.</p>
+            <p className="text-white/90 max-w-2xl mt-2 text-sm sm:text-base">Share your specs, drawings, and quantities—we'll respond quickly with a precise, code-compliant proposal.</p>
           </div>
         </div>
       </section>
@@ -229,7 +229,7 @@ const Quote: React.FC = () => {
                       'PWHT / Stress Relief',
                       'Preheating',
                       'Dry Out System',
-                      'Annealing & Normalizing',
+                      'Normalizing',
                       'Hydrogen Diffusion',
                       'Temporary Electric Furnace',
                       'Other',
@@ -297,19 +297,19 @@ const Quote: React.FC = () => {
 
                     {/* Pills and helper text */}
                     {files.length > 0 && (
-                      <div className="grid grid-cols-2 gap-2 mt-2 sm:flex sm:flex-wrap">
+                      <div className="grid grid-cols-2 gap-2 mt-2">
                         {files.map((f) => (
                           <span
                             key={`${f.name}-${f.size}-${f.lastModified}`}
-                            className="inline-flex items-center gap-2 text-xs bg-white border border-[var(--color-light-gray)] rounded-full px-3 py-1 shadow-sm w-full sm:w-auto"
+                            className="inline-flex items-center gap-2 text-xs bg-white border border-[var(--color-light-gray)] rounded-full px-3 py-1 shadow-sm w-full"
                           >
-                            <span className="truncate max-w-[120px] sm:max-w-[180px]" title={f.name}>
+                            <span className="truncate flex-1 min-w-0" title={f.name}>
                               {f.name} · {formatSize(f.size)} MB
                             </span>
                             <button
                               type="button"
                               aria-label={`Remove ${f.name}`}
-                              className="ml-1 grid place-items-center w-5 h-5 rounded-full bg-[var(--color-primary-blue)] text-white hover:opacity-90 transition-opacity"
+                              className="grid place-items-center w-5 h-5 rounded-full bg-[var(--color-primary-blue)] text-white hover:opacity-90 transition-opacity flex-shrink-0"
                               onClick={() => handleRemoveFile(f)}
                             >
                               ×
@@ -335,7 +335,7 @@ const Quote: React.FC = () => {
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </button>
-                <p className="text-xs text-[var(--color-dark)]/70">By submitting, you agree we may contact you about this request. We’ll never share your information.</p>
+                <p className="text-xs text-[var(--color-dark)]/70">By submitting, you agree we may contact you about this request. We'll never share your information.</p>
               </form>
             </div>
           </div>

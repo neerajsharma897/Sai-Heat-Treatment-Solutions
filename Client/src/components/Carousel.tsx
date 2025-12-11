@@ -86,7 +86,7 @@ const Carousel: React.FC<CarouselProps> = ({
 
           {/* Content */}
             <div key={fadeKey} className="absolute inset-0 flex items-center justify-center z-20">
-              <div className="w-full lg:max-w-4xl px-3 sm:px-6 lg:px-12 mx-auto space-y-3 sm:space-y-4 md:space-y-6 fade-in">
+              <div className="w-full lg:max-w-4xl px-6 sm:px-6 lg:px-12 mx-auto space-y-3 sm:space-y-4 md:space-y-6 fade-in">
               {/* Subtitle */}
               <div className="hidden sm:inline-block bg-[var(--color-primary-orange)]/20 backdrop-blur-sm border border-[var(--color-primary-orange)]/30 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 fade-in delay-200">
                 <span className="text-[var(--color-primary-orange)] font-semibold text-sm uppercase tracking-wider" style={{ fontFamily: 'var(--font-family-heading)' }}>

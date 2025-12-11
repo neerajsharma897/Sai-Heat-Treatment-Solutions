@@ -20,7 +20,7 @@ function buildAutoReplyHtml({ name, service }) {
     </style>
   </head>
   <body style="margin:0; padding:0; background:#ffffff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;">
-    <div class="preheader">We’ve received your ${service} request. We’ll get back within 1 business day (Mon–Sat).</div>
+    <div class="preheader">We've received your ${service} request. We'll get back within 1 business day (Mon–Sat).</div>
 
     <!-- Outer wrapper -->
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#ffffff;">
@@ -85,7 +85,7 @@ function buildAutoReplyHtml({ name, service }) {
                         <li>PWHT / Stress Relief</li>
                         <li>Preheating</li>
                         <li>Temporary Electric Furnace</li>
-                        <li>Annealing & Normalizing</li>
+                        <li>Normalizing</li>
                         <li>Hydrogen Diffusion</li>
                         <li>Dry Out System</li>
                       </ul>
@@ -99,7 +99,7 @@ function buildAutoReplyHtml({ name, service }) {
             <tr>
               <td style="padding:6px 0 0 0;">
                 <p style="margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:13px; line-height:1.7; color:#6b7280;">
-                  This mailbox is not monitored. For follow‑ups or to share more files, email
+                  This mailbox is not monitored. For follow-ups or to share more files, email
                   <a href="mailto:contact@saiheattreatmentsolutions.com" style="color:#0b1e33; text-decoration:none; font-weight:600;">contact@saiheattreatmentsolutions.com</a>
                   or call the number above.
                 </p>

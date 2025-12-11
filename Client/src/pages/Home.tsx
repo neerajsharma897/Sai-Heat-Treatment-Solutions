@@ -1,9 +1,80 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaIndustry, FaGlobe, FaUsers, FaShieldAlt } from 'react-icons/fa';
 import Carousel from '../components/Carousel';
 import { homeCarouselSlides } from '../data/carouselData';
 
 const Home: React.FC = () => {
+  const [stats, setStats] = useState([
+    { n: '0', l: 'Years Experience' },
+    { n: '0', l: 'Happy Customers' },
+    { n: '24/7', l: 'Service' },
+    { n: '0', l: 'Success Rate' }
+  ]);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          
+          // Animate Years Experience
+          let years = 0;
+          const yearsInterval = setInterval(() => {
+            years += 1;
+            if (years >= 15) {
+              years = 15;
+              clearInterval(yearsInterval);
+            }
+            setStats(prev => {
+              const updated = [...prev];
+              updated[0] = { ...updated[0], n: `${years}+` };
+              return updated;
+            });
+          }, 100);
+
+          // Animate Happy Customers
+          let customers = 0;
+          const customersInterval = setInterval(() => {
+            customers += 5;
+            if (customers >= 100) {
+              customers = 100;
+              clearInterval(customersInterval);
+            }
+            setStats(prev => {
+              const updated = [...prev];
+              updated[1] = { ...updated[1], n: `${customers}+` };
+              return updated;
+            });
+          }, 70);
+
+          // Animate Success Rate
+          let success = 0;
+          const successInterval = setInterval(() => {
+            success += 5;
+            if (success >= 100) {
+              success = 100;
+              clearInterval(successInterval);
+            }
+            setStats(prev => {
+              const updated = [...prev];
+              updated[3] = { ...updated[3], n: `${success}%` };
+              return updated;
+            });
+          }, 70);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasAnimated]);
+
   return (
     <div>
       {/* Hero Carousel Section */}
@@ -11,7 +82,7 @@ const Home: React.FC = () => {
 
       {/* Mission & Vision (Asymmetric) */}
       <section className="py-14 sm:py-20 bg-white">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="mb-12 sm:mb-16">
             <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] mb-3 sm:mb-4 font-heading text-center">
               Our Mission & Vision
@@ -48,11 +119,13 @@ const Home: React.FC = () => {
 
       {/* Stats strip */}
       <section className="bg-[var(--color-neutral-gray)] py-8 sm:py-12">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-            {[{n:'15+', l:'Years Experience'}, {n:'500+', l:'Happy Customers'}, {n:'24/7', l:'Service'},{n:'99%', l:'Success Rate'}].map((s) => (
-              <div key={s.l} className="">
-                <div className="text-2xl sm:text-3xl font-extrabold text-[var(--color-primary-blue)] font-heading">{s.n}</div>
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
+          <div ref={statsRef} className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            {stats.map((s) => (
+              <div key={s.l} className="transform transition-all duration-500 hover:scale-105">
+                <div className="text-2xl sm:text-3xl font-extrabold text-[var(--color-primary-blue)] font-heading transition-all duration-300">
+                  {s.n}
+                </div>
                 <div className="text-[var(--color-dark)] text-sm sm:text-base">{s.l}</div>
               </div>
             ))}
@@ -62,7 +135,7 @@ const Home: React.FC = () => {
 
       {/* About Snapshot */}
       <section id="about" className="py-14 sm:py-20 bg-white">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image */}
             <div className="lg:col-span-5 order-1 lg:order-none">
@@ -79,14 +152,14 @@ const Home: React.FC = () => {
             <div className="lg:col-span-7">
               <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] font-heading mb-3">About Sai Heat Treatment Solutions</h2>
               <p className="text-[var(--color-dark)] mb-5">
-                Founded as part of SAI GROUP, we deliver world‑class heat treatment across oil & gas, power, chemical, and heavy industries throughout India, Asia, and the Middle East.
+                Founded as part of SAI GROUP, we deliver world-class heat treatment across oil & gas, power, chemical, and heavy industries throughout India, Asia, and the Middle East.
               </p>
               <ul className="grid sm:grid-cols-2 gap-3">
                 {[
                   'Electrical and burner systems expertise',
-                  '300+ skilled technical staff',
+                  '200+ skilled technical staff',
                   'Mobile furnaces up to 1200°C',
-                  'Quality backed by EN/ASNT Level‑III',
+                  'Quality backed by EN/ASNT Level-III',
                 ].map(item => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="mt-1 inline-block w-2.5 h-2.5 rounded-full bg-[var(--color-primary-orange)]" />
@@ -101,7 +174,7 @@ const Home: React.FC = () => {
 
       {/* Global Presence band */}
       <section className="bg-[var(--color-primary-blue)] text-white py-10 sm:py-14">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             {[
               { title: 'India', desc: 'HQ in Maharashtra with nationwide coverage' },
@@ -119,7 +192,7 @@ const Home: React.FC = () => {
 
       {/* Why Choose Us (Staggered list) */}
       <section className="py-14 sm:py-20 bg-white">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="text-center mb-10 sm:mb-12">
             <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] font-heading">
               Why Choose Us
@@ -129,7 +202,7 @@ const Home: React.FC = () => {
             {[
               {icon: <FaGlobe className="text-2xl" />, title:'Global Experience', desc:'Serving Asia, Middle East, and Africa with a proven track record.'},
               {icon: <FaUsers className="text-2xl" />, title:'ASNT Level-III Experts', desc:'EN/ASNT Level-III inspectors ensure the highest quality standards.'},
-              {icon: <FaIndustry className="text-2xl" />, title:'Advanced Equipment', desc:'14 PWHT machines (50 KVA), 25+ recorders, mobile furnaces up to 1200°C.'},
+              {icon: <FaIndustry className="text-2xl" />, title:'Advanced Equipment', desc:'25 PWHT machines (50 KVA), 100 High Voltage PWHT machines, 5 Oil firing Burners(30 MBTU), 40+ recorders, mobile furnaces up to 1200°C.'},
               {icon: <FaShieldAlt className="text-2xl" />, title:'Safety First', desc:'Zero incidents goal with structured risk management and safety-first culture.'},
             ].map((f, i) => (
               <div key={f.title} className={`flex items-start gap-4 p-6 rounded-xl shadow-sm border border-[var(--color-light-gray)] hover:shadow-md transition ${i % 2 ? 'md:translate-y-3' : ''}`}>
@@ -146,15 +219,15 @@ const Home: React.FC = () => {
 
       {/* Key Team (concise) */}
       <section className="py-10 sm:py-12 bg-[var(--color-neutral-gray)]">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="text-center mb-6 sm:mb-8">
             <h2 className="text-[1.9rem] sm:text-4xl  lg:text-5xl mb-4 font-bold text-[var(--color-primary-blue)] font-heading">Key Team</h2>
             <p className="text-[var(--color-dark)]">Leadership with deep NDT and heat treatment expertise.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {/* Anil Khond */}
             <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
-              <div className="h-40 bg-[var(--color-neutral-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
+              <div className="h-40 bg-[var(--color-medium-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
               <div className="p-6">
                 <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] font-heading">Mr. Anil Khond</h3>
                 <p className="text-[var(--color-dark)] text-sm mt-1">NDT: PAUT, TOFD, UT, MT, RT, PT</p>
@@ -167,7 +240,7 @@ const Home: React.FC = () => {
 
             {/* Naresh Kolekar */}
             <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
-              <div className="h-40 bg-[var(--color-neutral-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
+              <div className="h-40 bg-[var(--color-medium-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
               <div className="p-6">
                 <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] font-heading">Mr. Naresh Kolekar</h3>
                 <p className="text-[var(--color-dark)] text-sm mt-1">Heat Treatment Specialist</p>
@@ -180,7 +253,7 @@ const Home: React.FC = () => {
 
             {/* Dharmendra Sharma */}
             <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden">
-              <div className="h-40 bg-[var(--color-neutral-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
+              <div className="h-40 bg-[var(--color-medium-gray)] border-b border-[var(--color-light-gray)] grid place-items-center text-[var(--color-dark)] text-xs uppercase tracking-wide">Image coming soon</div>
               <div className="p-6">
                 <h3 className="text-lg sm:text-xl font-semibold text-[var(--color-primary-blue)] font-heading">Mr. Dharmendra Sharma</h3>
                 <p className="text-[var(--color-dark)] text-sm mt-1">Heat Treatment Specialist</p>

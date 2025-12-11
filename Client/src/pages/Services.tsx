@@ -1,5 +1,7 @@
 import React from 'react';
-import { FaTools, FaIndustry, FaCogs } from 'react-icons/fa';
+import { FaTools, FaIndustry, FaCogs, FaShip, FaPlane, FaBuilding } from 'react-icons/fa';
+import { FaOilWell } from 'react-icons/fa6';
+import { GiPowerLightning } from "react-icons/gi";
 import { Link } from 'react-router-dom';
 
 // Define the type for a single service object
@@ -7,6 +9,16 @@ interface Service {
   title: string;
   description: string;
   img: string;
+}
+
+interface AdditionalServices{
+  title: string;
+  description: string;
+}
+
+interface Industry {
+  name: string;
+  icon: React.ElementType;
 }
 
 const Services: React.FC = () => {
@@ -19,15 +31,15 @@ const Services: React.FC = () => {
     {
       title: "Preheating",
       description: "Controlled preheating slows the cooling process after welding, reducing defects like cold cracks and lowering residual stress. Process maintained until welding completion with continuous monitoring.",
-      img: "/Website gallery/IMG_001.jpg"
+      img: "/Website gallery/IMG_016.jpeg"
     },
     {
       title: "Dry Out System",
       description: "Specialized service for newly installed refractory in high-temperature processes. We deploy high-velocity burners or electrical heating elements to prevent stress cracking and ensure refractory longevity.",
       img: "/Website gallery/IMG_012.jpg"
     },
-    {
-      title: "Annealing & Normalizing",
+        {
+      title: "Normalizing",
       description: "Heat treatment processes to alter material microstructure, improving mechanical properties like toughness and ductility while relieving internal stresses for optimal performance.",
       img: "/Website gallery/IMG_011.jpg"
     },
@@ -43,33 +55,40 @@ const Services: React.FC = () => {
     }
   ];
 
-  const additionalServices: Service[] = [
+  const additionalServices: AdditionalServices[] = [
     {
       title: "Intermediate Stress Relieving",
       description: "Intermediate heat treatment between welding passes to control residual stress buildup in multi-pass welds and complex fabrications.",
-      img: "/tenweb_media_RWW2L8TB4.jpg"
     },
     {
       title: "Paint Baking",
       description: "Controlled heating process for curing paint coatings to achieve optimal adhesion, durability, and finish quality on industrial equipment.",
-      img: "/tenweb_media_syr79yfpg.jpg"
     },
     {
       title: "Internal Gas & Oil Firing",
       description: "Internal firing systems for large vessels and tanks using gas and oil burners with precise temperature distribution and control systems.",
-      img: "/tenweb_media_r8h0xvvhf.jpg"
     },
     {
       title: "External Gas & Oil Firing",
       description: "External heating solutions using multiple capacity burners for various applications with advanced safety and monitoring systems.",
-      img: "/tenweb_media_rf7rq7x5p.jpg"
     },
     {
       title: "Tempering Services",
       description: "Controlled tempering processes to achieve desired hardness and toughness balance in heat-treated components for optimal service performance.",
-      img: "/tenweb_media_r03qb6za6.jpg"
-    }
+    },
   ];
+
+  const industries: Industry[] = [
+    { name: "Oil & Gas Plants", icon: FaOilWell },
+    { name: "Power Plants", icon: GiPowerLightning },
+    { name: "Chemical Plants", icon: FaIndustry },
+    { name: "Heavy Fabrication", icon: FaBuilding },
+    { name: "Shipping", icon: FaShip },
+    { name: "Metal Manufacturing", icon: FaIndustry },
+    { name: "Aviation", icon: FaPlane },
+    { name: "Pulp and Paper Mills", icon: FaIndustry },
+  ];
+
   return (
     <div>
       {/* Hero Image under Navbar (no carousel) */}
@@ -90,10 +109,9 @@ const Services: React.FC = () => {
 
       {/* Services Overview Grid */}
       <section className="py-14 sm:py-20 bg-white">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="text-center mb-10 sm:mb-12">
             <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] font-heading">Core Services</h2>
-            <p className="text-[var(--color-dark)] max-w-3xl mx-auto">High‑precision field and shop heat treatment with full data logging and code compliance.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {primaryServices.map((service) => (
@@ -111,7 +129,7 @@ const Services: React.FC = () => {
 
       {/* Additional Services */}
       <section className="py-12 sm:py-16 bg-[var(--color-neutral-gray)]">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary-blue)] font-heading">Additional Capabilities</h2>
           </div>
@@ -131,22 +149,22 @@ const Services: React.FC = () => {
 
       {/* PWHT / Stress Relief (Deep Dive) */}
   <section id="pwht" className="py-14 sm:py-20 bg-white scroll-mt-[var(--nav-h)]">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-10 border border-[var(--color-light-gray)]">
             <div className="grid lg:grid-cols-12 gap-8 items-start">
               <div className="lg:col-span-7">
                 <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-primary-blue)] mb-3 font-heading">PWHT / Stress Relief</h2>
                 <p className="text-[var(--color-dark)] mb-4">
-                  Post‑weld heat treatment (PWHT) reduces residual stresses, controls hardness, and improves toughness—enhancing corrosion resistance and ensuring durable, code‑compliant performance.
+                  Post-weld heat treatment (PWHT) reduces residual stresses, controls hardness, and improves toughness enhancing corrosion resistance and ensuring durable, code-compliant performance.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-xl font-semibold text-[var(--color-primary-blue)] mb-2 font-heading">When it’s required</h3>
+                    <h3 className="text-xl font-semibold text-[var(--color-primary-blue)] mb-2 font-heading">When it's required</h3>
                     <ul className="text-[var(--color-dark)] space-y-2 text-sm">
                       <li>• Pressure vessels, piping, and headers (ASME/ANSI)</li>
-                      <li>• Thick‑section welds to mitigate HAZ hardness</li>
-                      <li>• Sour service / HIC‑susceptible materials</li>
-                      <li>• Repair welds on in‑service equipment</li>
+                      <li>• Thick-section welds to mitigate HAZ hardness</li>
+                      <li>• Sour service / HIC-susceptible materials</li>
+                      <li>• Repair welds on in-service equipment</li>
                     </ul>
                   </div>
                   <div>
@@ -169,10 +187,10 @@ const Services: React.FC = () => {
               <div className="bg-[var(--color-neutral-gray)] rounded-xl p-5 border border-[var(--color-light-gray)]">
                 <h4 className="text-lg font-semibold text-[var(--color-primary-blue)] mb-2 font-heading">Specs & Compliance</h4>
                 <ul className="text-[var(--color-dark)] space-y-1 text-sm">
-                  <li>• Temperature ranges: 200°C–760°C (material dependent)</li>
-                  <li>• Codes: ASME Sec. VIII/IX, B31.1, B31.3, API 650/653</li>
-                  <li>• Controlled ramp, soak, and cool‑down rates</li>
-                  <li>• Multi‑point thermocouple monitoring</li>
+                  <li>• Temperature ranges: 200°C-760°C (Depends on material)</li>
+                  <li>• Codes: ASME Sec. VIII/IX DIV 1 & 2, B31.1, B31.3, API 650/, BS EN 13445, PD 5500 </li>
+                  <li>• Controlled ramp, soak, and cool-down rates</li>
+                  <li>• Multi-point thermocouple monitoring</li>
                 </ul>
               </div>
               <div className="bg-[var(--color-neutral-gray)] rounded-xl p-5 border border-[var(--color-light-gray)]">
@@ -186,11 +204,11 @@ const Services: React.FC = () => {
               </div>
             </div>
 
-              <div className="mt-6">
+            <div className="mt-6">
               <h4 className="text-lg font-semibold text-[var(--color-primary-blue)] mb-2 font-heading">Typical Applications</h4>
               <div className="flex flex-wrap gap-2">
                 {['Pipeline girth welds','Pressure vessels','Boilers','Heat exchangers','Valves & fittings','Casting repairs'].map(x => (
-                  <span key={x} className="px-3 py-1.5 rounded-full bg-[var(--color-primary-orange)]/10 text-[var(--color-primary-orange)] text-sm">{x}</span>
+                  <span key={x} className="px-3 py-1.5 rounded-full bg-[var(--color-primary-orange)]/30 text-[var(--color-primary-black)] text-sm">{x}</span>
                 ))}
               </div>
             </div>
@@ -204,7 +222,7 @@ const Services: React.FC = () => {
 
       {/* Design & Manufacturing */}
       <section className="py-12 sm:py-16 bg-[var(--color-neutral-gray)]">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
           <div className="bg-white p-8 rounded-2xl shadow-lg">
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary-blue)] mb-6 text-center font-heading">Design & Manufacturing</h2>
             <div className="grid md:grid-cols-3 gap-6 text-center">
@@ -230,6 +248,27 @@ const Services: React.FC = () => {
                 <p className="text-[var(--color-dark)] text-sm">Rotating machines and specialized heat transfer equipment</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Industries We Serve */}
+      <section className="py-14 sm:py-20 bg-white">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-6">
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-[1.9rem] sm:text-4xl lg:text-5xl font-bold text-[var(--color-primary-blue)] font-heading">Industries We Serve</h2>
+            <p className="text-[var(--color-dark)] mt-3 max-w-2xl mx-auto">
+              Our technical expertise in heat treatment is trusted by a diverse range of critical industries across the Middle East & Asia Pacific.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-10">
+            {industries.map((industry, index) => (
+              <div key={index} className="text-center p-6 bg-[var(--color-neutral-gray)] rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                <industry.icon className="text-5xl text-[var(--color-primary-orange)] mx-auto mb-4" aria-hidden="true" />
+                <h3 className="text-lg font-semibold text-[var(--color-primary-blue)] font-heading">{industry.name}</h3>
+              </div>
+            ))}
           </div>
         </div>
       </section>

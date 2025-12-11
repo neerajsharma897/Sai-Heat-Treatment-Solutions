@@ -19,7 +19,7 @@ export const galleryFiles: string[] = [
   "IMG_013.jpg",
   "IMG_014.jpg",
   "IMG_015.jpg",
-  "IMG_016.jpg",
+  "IMG_016.jpeg",
   "IMG_017.jpg",
   "IMG_018.jpg",
   "IMG_019.jpg",

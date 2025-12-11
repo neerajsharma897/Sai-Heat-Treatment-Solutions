@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { galleryImages } from '../data/galleryImages';
 
 const srOnly = 'sr-only';
@@ -10,6 +10,7 @@ const Gallery: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const MOBILE_PAGE_SIZE = 10;
   const [visibleCount, setVisibleCount] = useState<number>(MOBILE_PAGE_SIZE);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const open = (idx: number) => setLightboxIndex(idx);
   const close = () => setLightboxIndex(null);
@@ -57,10 +58,28 @@ const Gallery: React.FC = () => {
     }
   }, [isMobile, images.length]);
 
+  // Infinite scroll: auto-load more when reaching the bottom
+  useEffect(() => {
+    if (!isMobile || visibleCount >= images.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((c) => Math.min(c + MOBILE_PAGE_SIZE, images.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isMobile, visibleCount, images.length]);
+
   const displayImages = isMobile ? images.slice(0, visibleCount) : images;
   const canLoadMore = isMobile && visibleCount < images.length;
-  const loadMore = () =>
-    setVisibleCount((c) => Math.min(c + MOBILE_PAGE_SIZE, images.length));
 
   return (
     <div className="min-h-[60vh] bg-white">
@@ -84,9 +103,9 @@ const Gallery: React.FC = () => {
         </div>
       </section>
 
-      <section className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-10 sm:py-14">
+      <section className="w-full max-w-8xl mx-auto px-6 sm:px-6 py-10 sm:py-14">
         {/* Parent wrapper with slight greyish background */}
-        <div className="rounded-lg bg-[var(--color-neutral-gray)]/80 border border-[var(--color-light-gray)] p-3 sm:p-4">
+        <div className="rounded-lg bg-white border border-[var(--color-light-gray)] p-3 sm:p-4">
           {/* Masonry using CSS columns for a Pinterest-like layout 
               - Mobile: 2 columns
               - md: 3 columns
@@ -101,7 +120,7 @@ const Gallery: React.FC = () => {
                 className="masonry-item inline-block w-full align-top break-inside-avoid"
               >
                 <button
-                  className="group relative w-full overflow-hidden rounded-lg bg-[var(--color-neutral-gray)] shadow hover:shadow-lg transition-shadow"
+                  className="group relative w-full overflow-hidden rounded-lg bg-[var(--color-neutral-gray)] shadow hover:shadow-lg transition-shadow sm:pointer-events-auto pointer-events-none"
                   onClick={() => open(globalIdx)}
                   aria-label={`Open image ${globalIdx + 1}`}
                 >
@@ -117,15 +136,14 @@ const Gallery: React.FC = () => {
             );})}
           </div>
 
-          {/* Mobile pagination: Load 10 more at a time */}
+          {/* Infinite scroll trigger point */}
           {canLoadMore && (
-            <div className="mt-6 flex justify-center">
-              <button
-                onClick={loadMore}
-                className="px-4 py-2 rounded-md bg-[var(--color-primary-orange)] text-white shadow hover:shadow-md hover:bg-[var(--color-primary-blue)]/90 active:scale-[0.99] transition"
-              >
-                Load 10 more
-              </button>
+            <div ref={loadMoreRef} className="mt-6 flex justify-center py-8">
+              <div className="flex items-center gap-2 text-[var(--color-primary-blue)]">
+                <div className="w-2 h-2 bg-[var(--color-primary-orange)] rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-[var(--color-primary-orange)] rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                <div className="w-2 h-2 bg-[var(--color-primary-orange)] rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+              </div>
             </div>
           )}
         </div>
@@ -144,8 +162,8 @@ const Gallery: React.FC = () => {
               alt={images[lightboxIndex].alt}
               className="w-full max-h-[80vh] object-contain rounded-md shadow-2xl"
             />
-            {/* Controls */}
-            <div className="absolute inset-x-0 -bottom-12 flex items-center justify-center gap-4">
+            {/* Controls - hidden on mobile */}
+            <div className="hidden sm:flex absolute inset-x-0 -bottom-12 items-center justify-center gap-4">
               <button
                 onClick={prev}
                 className="bg-white/90 hover:bg-white text-[var(--color-dark)] px-4 py-2 rounded shadow"

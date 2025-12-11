@@ -162,7 +162,7 @@ ${requirements}
         attachments: internalAttachments,
       });
 
-      // Customer auto‑reply
+      // Customer auto-reply
       await transporter.sendMail({
         from: FROM,
         to: email,
@@ -171,7 +171,7 @@ ${requirements}
         text:
 `Hello ${name},
 
-Thanks for contacting Sai Heat Treatment Solutions. We’ve received your request for ${service} and assigned it to our team. You’ll hear from us within one business day.
+Thanks for contacting Sai Heat Treatment Solutions. We've received your request for ${service} and assigned it to our team. You'll hear from us within one business day.
 
 Need urgent help? Call +91 93216 13552. To add details or files, reply to this email.
 

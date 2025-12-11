@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaMapMarkerAlt, FaIndustry, FaCalendar, FaTools } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaUserAlt , FaCalendar, FaTools } from 'react-icons/fa';
 
 interface Project {
     title: string;
@@ -36,7 +36,7 @@ const Projects: React.FC = () => {
             location: "Dubai",
             country: "UAE",
             description: "Heat treatment services for the innovative Concentrated Solar Power and Photovoltaic hybrid renewable energy project, contributing to UAE's sustainable energy goals.",
-            services: ["PWHT", "Annealing", "Equipment Heat Treatment"],
+            services: ["PWHT", "Equipment Heat Treatment"],
             client: "China Energy Engineering Group",
             year: "2024",
         },
@@ -118,7 +118,7 @@ const Projects: React.FC = () => {
                 </div>
             </section>
 
-            <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-10 sm:py-14">
+            <div className="w-full max-w-7xl mx-auto px-6 sm:px-6 py-10 sm:py-14">
 
                 {/* Projects Grid */}
                 <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 mb-16">
@@ -129,13 +129,13 @@ const Projects: React.FC = () => {
                                 <h3 className="text-xl font-bold text-[var(--color-primary-blue)] mb-2 font-heading">{project.title}</h3>
 
                                 {/* Flag, Location, Year on separate lines for symmetry */}
-                                <div className="flex items-center text-[var(--color-medium-gray)] mb-1">
-                                    <FaMapMarkerAlt className="mr-2 text-[var(--color-primary-gray)]" />
+                                <div className="flex items-center text-[var(--color-dark-gray)] mb-1">
+                                    <FaMapMarkerAlt className="mr-2" />
                                     <span>{project.location}, {project.country}</span>
                                 </div>
                                 {project.year && (
-                                    <div className="flex items-center text-[var(--color-medium-gray)] mb-3">
-                                        <FaCalendar className="mr-2 text-[var(--color-primary-gray)]" />
+                                    <div className="flex items-center text-[var(--color-dark-gray)] mb-3">
+                                        <FaCalendar className="mr-2 " />
                                         <span>{project.year}</span>
                                     </div>
                                 )}
@@ -150,13 +150,13 @@ const Projects: React.FC = () => {
 
                                 {/* div3: Services Provided */}
                                 <div className="mt-4">
-                                    <h5 className="font-semibold text-[var(--color-primary-blue)] mb-2 flex items-center font-heading">
-                                        <FaTools className="mr-2 text-[var(--color-primary-gray)]" />
+                                    <h5 className="font-semibold mb-2 flex items-center font-heading text-[var(--color-dark-gray)]">
+                                        <FaTools className="mr-2 " />
                                         Services Provided:
                                     </h5>
                                     <div className="flex flex-wrap gap-2">
                                         {project.services.map((service, idx) => (
-                                            <span key={idx} className="px-3 py-1 bg-[var(--color-primary-orange)]/10 text-[var(--color-primary-orange)] text-sm rounded-full">
+                                            <span key={idx} className="px-3 py-1 bg-[var(--color-primary-orange)]/30 text-[var(--color-primary-black)] text-sm rounded-full">
                                                 {service}
                                             </span>
                                         ))}
@@ -164,18 +164,20 @@ const Projects: React.FC = () => {
                                 </div>
 
                                 {/* Client Line */}
-                                <div className="mt-4 flex items-center text-[var(--color-medium-gray)]">
-                                    <FaIndustry className="mr-2 text-[var(--color-primary-gray)]" />
+                                <div className="mt-4 flex items-center text-[var(--color-dark-gray)]">
+                                    <FaUserAlt  className="mr-2 text-[var(--color-primary-gray)]" />
                                     <span className="font-medium">Client: {project.client}</span>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+            </div>
 
-                {/* Stats Section */}
-                <div className="bg-[var(--color-primary-blue)] text-white p-8 rounded-lg shadow-lg mb-16 border border-[var(--color-light-gray)]/30">
-                    <h2 className="text-2xl font-bold text-center mb-8">Project Statistics</h2>
+            {/* Stats Section - Full Width */}
+            <div className="w-full">
+                <div className="bg-[var(--color-primary-blue)] text-white p-8 mb-16">
+                    <h2 className="lg:text-5xl sm:text-4xl font-bold text-center mb-8">Project Statistics</h2>
                     <div className="grid md:grid-cols-4 gap-8 text-center">
                         <div>
                             <div className="text-3xl font-bold text-[var(--color-primary-orange)] mb-2">50+</div>
@@ -195,10 +197,12 @@ const Projects: React.FC = () => {
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Major Clients */}
+            {/* Major Clients - Full Width */}
+            <div className="w-full max-w-7xl mx-auto px-6 sm:px-6 pb-10 sm:pb-14">
                 <div className="bg-white p-8 rounded-lg shadow-lg border border-[var(--color-light-gray)]">
-                    <h2 className="text-2xl font-bold text-primary-blue text-center mb-8">Trusted by Leading Companies</h2>
+                    <h2 className="text-3xl font-bold text-primary-blue text-center mb-8">Trusted by Leading Companies</h2>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {clients.map((client, index) => {
                             const total = clients.length;
@@ -232,7 +236,7 @@ const Projects: React.FC = () => {
                         })}
                     </div>
                     <div className="text-center mt-6">
-                        <p className="text-[var(--color-medium-gray)]">
+                        <p className="text-[var(--color-dark-gray)]">
                             ...and many more across UAE, Oman, India, Nigeria, Kenya, and Africa
                         </p>
                     </div>

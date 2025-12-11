@@ -9,7 +9,7 @@ export const homeCarouselSlides = [
   {
     title: "Comprehensive Services",
     subtitle: "End-to-End Heat Treatment",
-    description: "From Preheating and PWHT to Annealing, Normalizing, Paint Baking, and Dry Outs – delivering complete solutions under one roof.",
+    description: "From Preheating and PWHT to Normalizing, Paint Baking, and Dry Outs – delivering complete solutions under one roof.",
     image: '/tenweb_media_RWW2L8TB4.jpg'
   },
   {

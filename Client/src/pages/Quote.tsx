@@ -66,7 +66,8 @@ const Quote: React.FC = () => {
 
     setFiles(deduped);
     setFilesError('');
-    setStatusMessage(`${deduped.length} file${deduped.length === 1 ? '' : 's'} selected. Total ${formatSize(totalUsed)} MB.`);
+    const dedupeTotal = deduped.reduce((sum, f) => sum + f.size, 0);
+    setStatusMessage(`${deduped.length} file${deduped.length === 1 ? '' : 's'} selected. Total ${formatSize(dedupeTotal)} MB.`);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
